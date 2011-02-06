@@ -1,0 +1,8 @@
+[parameters]
+symmetric 0
+type non-reflexive
+[alphabet]
+[rules]
+baa,1;b,aa
+[axioms]
+baa

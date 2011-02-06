@@ -1,0 +1,11 @@
+#Due to Pixton
+[parameters]
+symmetric 0
+type head
+[alphabet]
+[rules]
+1,1;bb,1
+1,b;b,1
+1,bb;1,1
+[axioms]
+bb bba bab abb
