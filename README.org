@@ -13,7 +13,7 @@ splicing action of restriction enzymes on a set of initial strings.  [[http://ww
 is a good overview of the topic by Head and Pixton.  
 ** What can splicerack do?
 Currently, splicerack can accept a splicing system as input and generate the NFA
-of the corresponding splicing language.  Development is still active, and
+of the corresponding splicing language.  Development is just underway, and
 splicerack's features are in flux.
 ** How does splicerack convert splicing systems to NFAs?
 It follows the constructive proof given in the paper above.  Any bugs are due to
