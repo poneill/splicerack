@@ -41,53 +41,31 @@ getting it installed as I do.  [[http://www.graphviz.org/Download.php][This page
 Currently, you would use splicerack if you had a splicing system and wanted to
 know its associated NFA.  splicerack supposes you have the splicing system
 specified in what I will term /Pixton format/.  In fact, splicerack is currently
-only a partial implementation of the Pixton format; certain features like
-*delay* do not work yet.  Here is Pixton on the Pixton format, with my
-emendations:
+only a partial implementation of the Pixton format; only the features described
+below are guaranteed to work.  It is recommended that you give input files a
+=.head= extension; while splicerack will accept any extension, it requires that
+the input files have /some/ extension.  Otherwise it will not know what to call
+the postscript output.  Here is an example input file:
 
-: You must supply an H system file.  This is just a text file; I used the
-: extension ".hs", but this is not necessary.  [The .hs extension is now better 
-: known for Haskell source.  Although I would currently advise against giving
-: your files that extension, splicerack will happily accept any extension you
-: choose.  It does require, however, that your file have an extension, 
-: otherwise it will not know what to call the postscript output.  --PON]
-: 
-: Blank lines and lines beginning with '#' are ignored.
-: 
-: The file is divided into sections by "headers", written inside [].  Here's
-: an annotated sample
-: 
-: --------------------
-: 
 : [parameters]
-: # in this section you specify the type, delay, and whether the system is
-: # symmetric (that is, 2-splicing instead of 1-splicing), as follows:
-: # type must be either non-reflexive or head:
+: # You can set symmetry and reflexivity in this way, per Pixton's original
+: # format.  Symmetric is either 0 or 1.  type is either head or non-reflexive.
+: symmetric 0
 : type non-reflexive
-: # symmetric is either true (1) or false (0):
-: symmetric 1
-: # if non-reflexive then you need a delay
-: delay 2
-: 
 : [alphabet]
-: # splicerack is currently alphabet-agnostic.  You can specify one, but it will
-: # be ignored.  --PON
+: # Included for back-compatibility for Pixton format.  splicerack ignores this 
+: # parameter.
 : [rules]
-: # specify rules in the form u,v;w,z where u,v,w,z are any strings.  you can
-: # specify more than one rule on a line (separated by spaces)
-: # [rules should consist of lowercase letters, "1", and punctuation. --PON]
-: # you can write the empty string in a rule as "1" [and in no other way, so 
-: #far.  Don't represent the empty string with an actual empty string! --PON]
-: # examples:
-: a,bb;b,a  a,1;b,cd 
-: 
-: 
+: # Rules must be separated by whitespace.  
+: # For now, Use "1" for the empty string, (not "").
+: a,1;1,b
+: a,1;1,a 
+: b,1;1,b 
+: 1,a;b,1
 : [axioms]
-: # the axioms.  if the empty string is an axiom, write it as "1". 
-: # [Haven't tested empty axioms yet.  --PON]
-: # you can specify more than one axiom per line (separated by spaces)
-: # examples:
-: a aab abc
+: # Axioms must be separated by whitespace and come last in the file. 
+: ab
+
 
 Command line usage is as follows:
 : $./splicerack.py example.head
