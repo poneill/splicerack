@@ -213,10 +213,3 @@ class nfa(object):
         with open("%s.ps" % filename,'w') as g:
             g.write("".join(task.stdout.readlines()))
 
-print "evaling"
-foo = nfa(["baa,1;b,aa"],["baa"])
-foo.graphviz("foo")
-# bar = nfa(["a,1;1,b", "a,1;1,a", "b,1;1,b", "1,a;b,1"],["ab"])
-# bar.graphviz("bar")
-# baz = nfa(["b,1;1,b","a,1;1,a"],["ab"])
-# baz.graphviz("baz")
