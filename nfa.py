@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, shlex
 
 class nfa(object):
     def __init__(self, rules, axioms,reflexive=False,symmetric=False):
@@ -208,7 +208,11 @@ class nfa(object):
                 for qf in self.edges[qi][a]])
         with open("%s.dot" % filename,'w') as f:
             f.write(template % (state_text,edges_text))
-        
+        command = shlex.split(("dot %s.dot -Tps" % filename))
+        task = subprocess.Popen(command, stdout=subprocess.PIPE)
+        with open("%s.ps" % filename,'w') as g:
+            g.write("".join(task.stdout.readlines()))
+
 print "evaling"
 foo = nfa(["baa,1;b,aa"],["baa"])
 foo.graphviz("foo")
