@@ -17,7 +17,7 @@ of the corresponding splicing language.  Development is just underway, and
 splicerack's features are in flux.
 ** How does splicerack convert splicing systems to NFAs?
 It follows the constructive proof given in the paper above.  Any bugs are due to
-my implementation of the algorithm.  Please be liberal with comments and
+my implementation of the algorithm, so please be liberal with comments and
 criticism.
 * Installation and use
 ** What do I need in order to setup splicerack?
