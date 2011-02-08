@@ -16,13 +16,18 @@ class converter(nfa):
         for f in self.final_states:
             self.add_edge(f,"",E)
 
-    def convert(self, automaton):
-            for qi in self.states:
-                debug(qi)
-                for qf in self.states:
-                    ts = self.find_transitions(qi,qf)
-                    if len(ts) > 1
-                    label = "+".join(["(%s)" % t for t in ts])
+    def convert(self):
+        def parenthesize(s):
+            return "(%s)" % s if "+" in s and not "(" == s[0] else s
+ 
+        for qi in self.states:
+            debug(qi)
+            for qf in self.states:
+                ts = self.find_transitions(qi,qf)
+                if len (ts) > 1:
+                    debug(ts)
+                    label = "+".join([parenthesize(t) for t in ts])
+                    debug(label)
                     self.remove_transitions(qi,qf)
 
     def find_transitions(self, qi,qf):
@@ -31,5 +36,11 @@ class converter(nfa):
                 if qf in self.edges[qi][transition]]
 
     def remove_transitions(self, qi, qf):
-        pass
+        for transition in self.edges[qi]:
+            reachable_states = self.edges[qi][transition]
+            if qf in reachable_states:
+                self.edges[qi][transition].remove(qf)
+
+foo = nfa(["baa,1;b,aa"],["baa"])
+bar = converter(foo)
         
