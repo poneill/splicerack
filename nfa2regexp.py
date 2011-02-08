@@ -41,6 +41,4 @@ class converter(nfa):
             if qf in reachable_states:
                 self.edges[qi][transition].remove(qf)
 
-foo = nfa(["baa,1;b,aa"],["baa"])
-bar = converter(foo)
         
