@@ -15,30 +15,52 @@ class converter(nfa):
         self.add_edge(B,"",0)
         for f in self.final_states:
             self.add_edge(f,"",E)
+    
+    def parenthesize(self, s):
+        return "(%s)" % s if "+" in s and not "(" == s[0] else s
 
-    def convert(self):
-        def parenthesize(s):
-            return "(%s)" % s if "+" in s and not "(" == s[0] else s
- 
-        for qi in self.states:
-            debug(qi)
-            for qf in self.states:
-                ts = self.find_transitions(qi,qf)
-                if len (ts) > 1:
-                    debug(ts)
-                    label = "+".join([parenthesize(t) for t in ts])
-                    debug(label)
-                    self.remove_transitions(qi,qf)
+    def convert(self): 
+        for state in self.states:
+            incoming_edges = self.incoming_edges(state)[:]#copies, since we'll
+            loops = self.loops(state)[:]                  #be deleting as we go
+            outgoing_edges = self.outgoing_edges(state)[:]
+            for (in_qi, in_label, in_qf) in incoming_edges: #(qi,a,qf)
+                for (loop_qi, loop_label, loop_qf) in loops: # simile
+                    for (out_qi, out_label, out_qf) in outgoing_edges:#simile
+                        label = (in_label + self.parenthesize(loop_label)
+                                 + "*" + out_label)
+                        self.add_edge(in_qi,label,out_qf)
+                        self.remove_edge(in_qi, in_label, in_qf)
+                        self.remove_edge(out_qi, out_label, out_qf)
 
-    def find_transitions(self, qi,qf):
-        """return a list of all transitions between qi and qf"""
-        return [transition for transition in self.edges[qi] 
-                if qf in self.edges[qi][transition]]
+    def condense_multiple_edges(self, qi=None,qf=None):
+        def condense(qi,qf):
+            ts = self.find_edges(qi,qf)
+            if len (ts) > 1:
+                debug(ts)
+                label = "+".join([self.parenthesize(t) for t in ts])
+                debug(label)
+                self.remove_edges(qi,qf)
+                self.add_edge(qi,label,qf)
+        if qi and qf:
+            condense(qi, qf)
+        else:
+            for qi in self.states:
+                for qf in self.states:
+                    condense(qi, qf)
 
-    def remove_transitions(self, qi, qf):
-        for transition in self.edges[qi]:
-            reachable_states = self.edges[qi][transition]
+
+    def find_edges(self, qi,qf):
+        """return a list of all edges between qi and qf"""
+        return [edge for edge in self.edges[qi] 
+                if qf in self.edges[qi][edge]]
+
+    def remove_edges(self, qi, qf):
+        """remove all edges from qi to qf"""
+        for edge in self.edges[qi]:
+            reachable_states = self.edges[qi][edge]
             if qf in reachable_states:
-                self.edges[qi][transition].remove(qf)
-
-        
+                self.edges[qi][edge].remove(qf)
+    
+foo = nfa(["baa,1;b,aa"],["baa"])
+bar = converter(foo)
