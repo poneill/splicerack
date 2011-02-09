@@ -33,6 +33,21 @@ class converter(nfa):
                         self.remove_edge(in_qi, in_label, in_qf)
                         self.remove_edge(out_qi, out_label, out_qf)
 
+    def incoming_edges(self, q):
+        debug(q)
+        return [(qi,a,q) for qi in self.edges for a in self.edges[qi]
+                if q in self.edges[qi][q]]
+    
+    def loops(self,q):
+        return [(q,a,q) for a in self.edges[q] if q in self.edges[q][a]]
+
+    def outgoing_edges(self,q):
+        return [(q,a,qf) for a in self.edges[q] for qf in self.edges[q][a]]
+
+    def remove_edge(self, qi, a, qf):
+        if a in self.edges[qi] and qf in self.edges[qi][a]:
+            self.edges[qi][a].remove(qf)
+
     def condense_multiple_edges(self, qi=None,qf=None):
         def condense(qi,qf):
             ts = self.find_edges(qi,qf)
