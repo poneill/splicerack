@@ -19,7 +19,21 @@ class converter(nfa):
             self.add_edge(f,"",self.E)
     
     def parenthesize(self, s):
-        return "(%s)" % s if len(s) > 1 and not "(" == s[0] else s
+        if len(s) > 1 and not "(" == s[0]:
+            return "(%s)" % s 
+        elif s == "":
+            return "1"
+        else:
+            return s
+    
+    def make_label(self, in_label, loop_label, out_label):
+        debug("making label: in %s loop %s out %s" % (in_label, loop_label, out_label))
+        def emptify(s): 
+            return s if s != "1" else ""
+        def star(s):
+            return s + ("*" if (s and s != "1") else "")
+        return (emptify(self.parenthesize(in_label)) + star(emptify(self.parenthesize(loop_label)))
+                 + emptify(self.parenthesize(out_label)))
 
     def convert(self): 
         for state in self.states:
@@ -30,8 +44,7 @@ class converter(nfa):
             for (in_qi, in_label, in_qf) in incoming_edges: #(qi,a,qf)
                 for (loop_qi, loop_label, loop_qf) in loops: # simile
                     for (out_qi, out_label, out_qf) in outgoing_edges:#simile
-                        label = (in_label + self.parenthesize(loop_label)
-                                 + ("*" if loop_label else "") + out_label)
+                        label = self.make_label(in_label, loop_label, out_label)
                         debug(label)
                         debug(("adding edge", in_qi,label,out_qf))
                         self.add_edge(in_qi,label,out_qf)
@@ -65,7 +78,7 @@ class converter(nfa):
         def condense(qi,qf):
             ts = self.find_edges(qi,qf)
             if len (ts) > 1:
-                debug(ts)
+                debug("edges from %s, %s: %s" % (qi,qf,ts))
                 label = "+".join([self.parenthesize(t) for t in ts])
                 debug("label from condensing multiple edges: %s" % label)
                 self.remove_edges(qi,qf)
@@ -97,6 +110,7 @@ class converter(nfa):
                 for qi in self.edges 
                 for a in self.edges[qi] 
                 for qf in self.edges[qi][a]])
+        debug(edges_text)
         with open("%s.dot" % filename,'w') as f:
             f.write(template % (state_text,edges_text))
         command = shlex.split(("dot %s.dot -Tps" % filename))
@@ -106,3 +120,18 @@ class converter(nfa):
     
 foo = nfa(["baa,1;b,aa"],["baa"])
 bar = converter(foo)
+def split_regexp(s):
+    union = []
+    curr = []
+    count = 0
+    for c in s:
+        if c == "(":
+            count += 1
+        if c == ")":
+            count -= 1
+        if c == "+" and count == 0:
+            union.append(curr)
+            curr = []
+        else:
+            curr.append(c)
+    return ["".join(u) for u in union]
