@@ -1,5 +1,6 @@
 from nfa import nfa
 import subprocess, shlex
+from copy import deepcopy
 
 DEBUG = True
 def debug(text):
@@ -8,7 +9,7 @@ def debug(text):
 
 class converter(nfa):
     def __init__(self,automaton):
-        self.edges = dict(automaton.edges)
+        self.edges = deepcopy(automaton.edges)
         self.states = automaton.states[:]
         self.final_states = automaton.final_states[:]
         self.B = -1
@@ -66,7 +67,7 @@ class converter(nfa):
             if len (ts) > 1:
                 debug(ts)
                 label = "+".join([self.parenthesize(t) for t in ts])
-                debug(label)
+                debug("label from condensing multiple edges: %s" % label)
                 self.remove_edges(qi,qf)
                 self.add_edge(qi,label,qf)
         if qi and qf:
