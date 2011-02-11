@@ -2,7 +2,8 @@ import reader
 from nfa2regexp import *
 from nfa import *
 import hachoir_regex as ha
-foo = nfa(*reader.parse_head_file("examples/aplusbplus.head"))
+foo = nfa(*reader.parse_head_file("examples/baaplus.head"))
 conv = converter(foo)
 conv.convert()
-reg = [a for a in conv.edges[-1] if conv.edges[-1][a] == [13]][0]
+reg = [a for a in conv.edges[-1] if conv.edges[conv.B][a] == [conv.E]][0]
+print reg
