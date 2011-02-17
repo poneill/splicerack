@@ -14,10 +14,11 @@ class converter(nfa):
         self.final_states = automaton.final_states[:]
         self.B = -1
         self.E = max(self.states) + 1
+        self.regexp = ""
         self.add_edge(self.B,"",0)
         for f in self.final_states:
             self.add_edge(f,"",self.E)
-    
+            
     def parenthesize(self, s):
         if len(s) > 1 and not "(" == s[0]:
             return "(%s)" % s 
@@ -57,6 +58,7 @@ class converter(nfa):
                         debug(self.edges)
             self.condense_multiple_edges()
         self.condense_multiple_edges(self.B,self.E)
+        [self.regexp] = [a for a in self.edges[self.B] if self.E in self.edges[self.B][a]]
 
     def incoming_edges(self, q):
         debug(q)
@@ -120,6 +122,7 @@ class converter(nfa):
     
 foo = nfa(["baa,1;b,aa"],["baa"])
 bar = converter(foo)
+bar.convert()
 def split_regexp(s):
     union = []
     curr = []
